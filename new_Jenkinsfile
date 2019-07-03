@@ -1,0 +1,53 @@
+//def out = "docker ps -a".execute().text
+
+//def ant = new AntBuilder()
+//def out2 = ant.sshexec(host:"10.136.224.43",username:"raigon" ,password: "Saptm170@" ,command:"docker ps -a")
+
+//String connectremote = "sshpass -p 'Saptm170@' ssh raigon@10.136.224.43 'ls'".execute().text
+//sshpass -p 'Saptm170@' ssh raigon@10.136.224.43 'docker ps -a'
+//def out2 = "docker ps -a".execute().text
+//println(out2)
+//println("hello World")
+
+//if(connectremote.isEmpty())
+
+//def node_availablity = new Integer[2]
+
+
+node {
+    stage('Build'){
+        echo "This is the build stage"
+        //echo out2
+    }
+    stage('Test'){
+        sh '''#!/bin/bash
+                echo "Hello World"
+            '''
+        sh  '''#!/bin/bash
+               USERNAME=raigon
+               HOSTS="10.136.228.185"
+               SCRIPT="docker ps -a|grep cloud"
+               index=0
+               for HOSTNAME in ${HOSTS} ; do
+                avail=$(sshpass -p 'Saptm170@' ssh -o StrictHostKeyChecking=no ${USERNAME}@${HOSTNAME} "${SCRIPT}")
+                echo "$avail"
+                if test -z "$avail"
+                then
+                 echo "Empty"
+                 res_avail[$index]=1
+                 echo "$res_avail"
+                else
+                 echo "non-Empty"
+                 res_avail[$index]=0
+                 echo "$res_avail"
+                fi
+                index=$((index+1))
+                echo "$index"                
+               done
+            '''
+        echo "this is the Test stage"
+    }
+    stage('Deploy'){
+        echo "this is the Deploy stage"
+    }
+}
